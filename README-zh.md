@@ -28,7 +28,7 @@ IPsec VPN 可以加密你的网络流量，以防止在通过因特网传送时�
 
 ## 快速开始
 
-首先，在你的 Linux 服务器[*](#quick-start-note) 上全新安装一个 Ubuntu 16.04/14.04 LTS, Debian 或者 CentOS 系统。
+首先，在你的 Linux 服务器[*](#quick-start-note) 上全新安装一个 Ubuntu LTS, Debian 或者 CentOS 系统。
 
 使用以下命令快速搭建 IPsec VPN 服务器：
 
@@ -53,12 +53,12 @@ wget https://git.io/vpnsetup -O vpnsetup.sh && sudo sh vpnsetup.sh
 - 封装所有的 VPN 流量在 UDP 协议，不需要 ESP 协议支持
 - 可直接作为 Amazon EC2 实例创建时的用户数据使用
 - 包含 `sysctl.conf` 优化设置，以达到更佳的传输性能
-- 已测试： Ubuntu 16.04/14.04， Debian 9/8 和 CentOS 7/6
+- 已测试： Ubuntu 18.04/16.04/14.04, Debian 9/8 和 CentOS 7/6
 
 ## 系统要求
 
 一个新创建的 <a href="https://aws.amazon.com/ec2/" target="_blank">Amazon EC2</a> 实例，使用这些映像 (AMIs):
-- <a href="https://cloud-images.ubuntu.com/locator/" target="_blank">Ubuntu 16.04 (Xenial) or 14.04 (Trusty)</a>
+- <a href="https://cloud-images.ubuntu.com/locator/" target="_blank">Ubuntu 18.04 (Bionic), 16.04 (Xenial) or 14.04 (Trusty)</a>
 - <a href="https://wiki.debian.org/Cloud/AmazonEC2Image" target="_blank">Debian 9 (Stretch) or 8 (Jessie)</a>
 - <a href="https://aws.amazon.com/marketplace/pp/B00O7WM7QW" target="_blank">CentOS 7 (x86_64) with Updates</a>
 - <a href="https://aws.amazon.com/marketplace/pp/B00NQAYLWO" target="_blank">CentOS 6 (x86_64) with Updates</a>
@@ -76,8 +76,6 @@ wget https://git.io/vpnsetup -O vpnsetup.sh && sudo sh vpnsetup.sh
 <a href="https://blog.ls20.com/ipsec-l2tp-vpn-auto-setup-for-ubuntu-12-04-on-amazon-ec2/#gettingavps" target="_blank">**&raquo; 我想建立并使用自己的 VPN ，但是没有可用的服务器**</a>
 
 高级用户可以在 $35 <a href="https://blog.elasticbyte.net/setting-up-a-native-cisco-ipsec-vpn-server-using-a-raspberry-pi/" target="_blank">Raspberry Pi 3</a> 上搭建 VPN 服务器。
-
-**注：** 目前脚本还不支持 Ubuntu 18.04，因为一个 xl2tpd 与 Linux 内核 4.15 兼容性的 <a href="https://github.com/xelerance/xl2tpd/issues/147" target="_blank">问题</a>。
 
 :warning: **不要** 在你的 PC 或者 Mac 上运行这些脚本！它们只能用在服务器上！
 
@@ -143,7 +141,7 @@ VPN_PASSWORD='你的VPN密码' sh vpnsetup.sh
 
 **Windows 用户** 在首次连接之前需要<a href="docs/clients-zh.md#windows-错误-809" target="_blank">修改注册表</a>，以解决 VPN 服务器 和/或 客户端与 NAT（比如家用路由器）的兼容问题。
 
-同一个 VPN 账户可以在你的多个设备上使用。但是由于 IPsec/L2TP 的局限性以及一个在 Libreswan 中的<a href="https://github.com/libreswan/libreswan/issues/166" target="_blank">问题</a>，现在还不支持同时连接在同一个 NAT（比如家用路由器）后面的多个设备。
+同一个 VPN 账户可以在你的多个设备上使用。但是由于 IPsec/L2TP 的局限性，如果需要同时连接在同一个 NAT （比如家用路由器）后面的多个设备到 VPN 服务器，你必须仅使用 <a href="docs/clients-xauth-zh.md" target="_blank">IPsec/XAuth 模式</a>。
 
 对于有外部防火墙的服务器（比如 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html" target="_blank">EC2</a>/<a href="https://cloud.google.com/vpc/docs/firewalls" target="_blank">GCE</a>），请为 VPN 打开 UDP 端口 500 和 4500。
 
@@ -151,7 +149,7 @@ VPN_PASSWORD='你的VPN密码' sh vpnsetup.sh
 
 在 VPN 已连接时，客户端配置为使用 <a href="https://developers.google.com/speed/public-dns/" target="_blank">Google Public DNS</a>。如果偏好其它的域名解析服务，请编辑 `/etc/ppp/options.xl2tpd` 和 `/etc/ipsec.conf` 并替换 `8.8.8.8` 和 `8.8.4.4`。然后重启服务器。
 
-使用 L2TP 内核支持有助于提高 IPsec/L2TP 性能。它在以下系统上可用： Ubuntu 16.04, Debian 9, CentOS 7 和 6。 Ubuntu 16.04 用户需要安装 `` linux-image-extra-`uname -r` `` 软件包并且重启 `xl2tpd` 服务。
+使用内核支持有助于提高 IPsec/L2TP 性能。它在以下系统上可用： Ubuntu 18.04/16.04, Debian 9 和 CentOS 7/6。 Ubuntu 用户需要安装 `` linux-image-extra-`uname -r` `` 软件包并运行 `service xl2tpd restart`。
 
 如果需要在安装后更改 IPTables 规则，请编辑 `/etc/iptables.rules` 和/或 `/etc/iptables/rules.v4` (Ubuntu/Debian)，或者 `/etc/sysconfig/iptables` (CentOS)。然后重启服务器。
 

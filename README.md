@@ -28,7 +28,7 @@ We will use <a href="https://libreswan.org/" target="_blank">Libreswan</a> as th
 
 ## Quick start
 
-First, prepare your Linux server[*](#quick-start-note) with a fresh install of Ubuntu 16.04/14.04 LTS, Debian or CentOS.
+First, prepare your Linux server[*](#quick-start-note) with a fresh install of Ubuntu LTS, Debian or CentOS.
 
 Use this one-liner to set up an IPsec VPN server:
 
@@ -53,12 +53,12 @@ For other installation options and how to set up VPN clients, read the sections 
 - Encapsulates all VPN traffic in UDP - does not need ESP protocol
 - Can be directly used as "user-data" for a new Amazon EC2 instance
 - Includes `sysctl.conf` optimizations for improved performance
-- Tested with Ubuntu 16.04/14.04, Debian 9/8 and CentOS 7/6
+- Tested with Ubuntu 18.04/16.04/14.04, Debian 9/8 and CentOS 7/6
 
 ## Requirements
 
 A newly created <a href="https://aws.amazon.com/ec2/" target="_blank">Amazon EC2</a> instance, from these images (AMIs):
-- <a href="https://cloud-images.ubuntu.com/locator/" target="_blank">Ubuntu 16.04 (Xenial) or 14.04 (Trusty)</a>
+- <a href="https://cloud-images.ubuntu.com/locator/" target="_blank">Ubuntu 18.04 (Bionic), 16.04 (Xenial) or 14.04 (Trusty)</a>
 - <a href="https://wiki.debian.org/Cloud/AmazonEC2Image" target="_blank">Debian 9 (Stretch) or 8 (Jessie)</a>
 - <a href="https://aws.amazon.com/marketplace/pp/B00O7WM7QW" target="_blank">CentOS 7 (x86_64) with Updates</a>
 - <a href="https://aws.amazon.com/marketplace/pp/B00NQAYLWO" target="_blank">CentOS 6 (x86_64) with Updates</a>
@@ -76,8 +76,6 @@ This also includes Linux VMs in public clouds, such as <a href="https://blog.ls2
 <a href="https://blog.ls20.com/ipsec-l2tp-vpn-auto-setup-for-ubuntu-12-04-on-amazon-ec2/#gettingavps" target="_blank">**&raquo; I want to run my own VPN but don't have a server for that**</a>
 
 Advanced users can set up the VPN server on a $35 <a href="https://blog.elasticbyte.net/setting-up-a-native-cisco-ipsec-vpn-server-using-a-raspberry-pi/" target="_blank">Raspberry Pi 3</a>.
-
-**Note:** Ubuntu 18.04 is not yet supported due to an xl2tpd <a href="https://github.com/xelerance/xl2tpd/issues/147" target="_blank">issue</a> with Linux kernel 4.15.
 
 :warning: **DO NOT** run these scripts on your PC or Mac! They should only be used on a server!
 
@@ -143,7 +141,7 @@ Enjoy your very own VPN! :sparkles::tada::rocket::sparkles:
 
 For **Windows users**, this <a href="docs/clients.md#windows-error-809" target="_blank">one-time registry change</a> is required if the VPN server and/or client is behind NAT (e.g. home router).
 
-The same VPN account can be used by your multiple devices. However, due to an IPsec/L2TP limitation and an Libreswan <a href="https://github.com/libreswan/libreswan/issues/166" target="_blank">issue</a>, it is not currently possible to connect multiple devices simultaneously from behind the same NAT (e.g. home router).
+The same VPN account can be used by your multiple devices. However, due to an IPsec/L2TP limitation, if you wish to connect multiple devices simultaneously from behind the same NAT (e.g. home router), you must use only <a href="docs/clients-xauth.md" target="_blank">IPsec/XAuth mode</a>.
 
 For servers with an external firewall (e.g. <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html" target="_blank">EC2</a>/<a href="https://cloud.google.com/vpc/docs/firewalls" target="_blank">GCE</a>), open UDP ports 500 and 4500 for the VPN.
 
@@ -151,7 +149,7 @@ If you wish to add, edit or remove VPN user accounts, see <a href="docs/manage-u
 
 Clients are set to use <a href="https://developers.google.com/speed/public-dns/" target="_blank">Google Public DNS</a> when the VPN is active. If another DNS provider is preferred, replace `8.8.8.8` and `8.8.4.4` in both `/etc/ppp/options.xl2tpd` and `/etc/ipsec.conf`. Then reboot your server.
 
-Using L2TP kernel support could improve IPsec/L2TP performance. It is available on Ubuntu 16.04, Debian 9, CentOS 7 and 6. Ubuntu 16.04 users should install the `` linux-image-extra-`uname -r` `` package and restart the `xl2tpd` service.
+Using kernel support could improve IPsec/L2TP performance. It is available on Ubuntu 18.04/16.04, Debian 9 and CentOS 7/6. Ubuntu users need to install the `` linux-image-extra-`uname -r` `` package and run `service xl2tpd restart`.
 
 To modify the IPTables rules after install, edit `/etc/iptables.rules` and/or `/etc/iptables/rules.v4` (Ubuntu/Debian), or `/etc/sysconfig/iptables` (CentOS). Then reboot your server.
 
